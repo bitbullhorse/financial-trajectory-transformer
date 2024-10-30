@@ -205,10 +205,13 @@ def main():
         for t in range(20000):
             action, action_log_prob = agent.select_action(state)
             state_, reward, done, _ = env.step(action)
+
             if True:
                 env.render()
             if agent.store(Transition(state, action, action_log_prob, (reward + 8) / 8, state_)):
                 agent.update()
+            if done:
+                break
             score += reward
             state = state_
 
@@ -217,13 +220,13 @@ def main():
 
         if i_ep % args.log_interval == 0:
             print('Ep {}\tMoving average score: {:.2f}\t'.format(i_ep, running_reward))
-        if running_reward > -200:
+        if running_reward > -100:
             print("Solved! Moving average score is now {}!".format(running_reward))
             env.close()
-            agent.save_param()
-            with open('log/ppo_training_records.pkl', 'wb') as f:
-                pickle.dump(training_records, f)
-            break
+            # agent.save_param()
+            # with open('log/ppo_training_records.pkl', 'wb') as f:
+            #     pickle.dump(training_records, f)
+            # break
 
     plt.plot([r.ep for r in training_records], [r.reward for r in training_records])
     plt.title('PPO')

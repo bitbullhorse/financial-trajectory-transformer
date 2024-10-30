@@ -33,11 +33,10 @@ if __name__ == "__main__":
     # env = make_vec_env(env_id, n_envs=num_cpu, seed=0, vec_env_cls=SubprocVecEnv)
 
     model = PPO("MlpPolicy", vec_env, verbose=1)
+    print(dir(model))
     print(model.policy)
-    print(model.policy.critic.qf0)
-    exit(0)
     model.learn(total_timesteps=25000)
-
+    exit(0)
     obs = vec_env.reset()
     for _ in range(1000):
         action, _states = model.predict(obs)

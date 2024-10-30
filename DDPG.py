@@ -23,7 +23,7 @@ parser.add_argument('--mode', default='train', type=str)  # mode = 'train' or 't
 # OpenAI gym environment name, # ['BipedalWalker-v2', 'Pendulum-v0'] or any continuous environment
 # Note that DDPG is feasible about hyper-parameters.
 # You should fine-tuning if you change to another environment.
-parser.add_argument("--env_name", default="Pendulum-v0")
+parser.add_argument("--env_name", default="Pendulum-v1")
 parser.add_argument('--tau', default=0.005, type=float)  # target smoothing coefficient
 parser.add_argument('--target_update_interval', default=1, type=int)
 parser.add_argument('--test_iteration', default=10, type=int)
@@ -141,6 +141,7 @@ class DDPG(object):
         self.critic_target = Critic(state_dim, action_dim).to(device)
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = optim.Adam(self.critic.parameters(), lr=1e-3)
+
         self.replay_buffer = Replay_buffer()
         self.writer = SummaryWriter(directory)
 
@@ -243,8 +244,8 @@ def main():
                     env.action_space.low, env.action_space.high)
 
                 next_state, reward, done, info = env.step(action)
-                if True: env.render()
-                agent.replay_buffer.push((state, next_state, action, reward, np.float(done)))
+                # if True: env.render()
+                agent.replay_buffer.push((state, next_state, action, reward, float(done)))
 
                 state = next_state
                 if done:
